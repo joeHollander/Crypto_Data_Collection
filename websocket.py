@@ -7,8 +7,9 @@ import asyncio
 import pandas as pd
 from pathlib import Path
 from cryptofeed import FeedHandler
-from cryptofeed.exchanges import Kraken, OKX
-from cryptofeed.defines import TRADES
+from cryptofeed.callback import OrderInfoCallback
+from cryptofeed.exchanges import Kraken, OKX, Coinbase, BinanceUS, Gemini, Bitstamp, dYdX
+from cryptofeed.defines import TRADES, OKX, ORDER_INFO
 from arcticdb import Arctic  # We now import ArcticDB directly
 
 
@@ -43,41 +44,33 @@ async def custom_arctic_callback(trade, receipt_timestamp):
     # The timestamp from the exchange is the natural index for time-series data
     df = pd.DataFrame(data, index=[pd.to_datetime(trade.timestamp, unit='s')])
     
-    # We use the library handle we created earlier to write the data
-    # The symbol name is a unique identifier for the data stream
-    # Using 'append' is efficient for writing streaming data.
     lib.append(trade.symbol, df)
     
-    # Optional: Print a confirmation to see it working in real-time
-    print(f"Stored: {trade.symbol} | {trade.side} | {trade.amount:.6f} @ {trade.price:.2f} = {(trade.amount * trade.price):.2f}" )
+    # confirmation of data 
+    print(f"Stored: {trade.exchange} | {trade.symbol} | {trade.side} | {trade.amount:.6f} @ {trade.price:.2f} = {(trade.amount * trade.price):.2f}" )
 
+async def order(oi, receipt_timestamp):
+    print(f"Order update received at {receipt_timestamp}: {oi}")
 
-def main():
+def main(symbols):
     """
     Main function to set up and run the cryptofeed feed.
     """
-    f = FeedHandler()
+    f = FeedHandler(config="config.yaml")
     
-    # Here, we pass our OWN function to the callbacks dictionary
-    f.add_feed(Kraken(
-        symbols=['BTC-USD'],
-        channels=[TRADES],
-        callbacks={TRADES: custom_arctic_callback}
-    ))
+    # custom call back function 
+    f.add_feed(Kraken(symbols=symbols, channels=[TRADES], callbacks={TRADES: custom_arctic_callback}))
+    f.add_feed(BinanceUS(symbols=symbols, channels=[TRADES], callbacks={TRADES: custom_arctic_callback}))
+    f.add_feed(Gemini(symbols=symbols, channels=[TRADES], callbacks={TRADES: custom_arctic_callback}))
+    
+    #f.add_feed(OKX, channels=[ORDER_INFO], symbols=["ETH-USDT-PERP", "BTC-USDT-PERP"], callbacks={ORDER_INFO: OrderInfoCallback(order)}, timeout=-1)
 
-    f.add_feed(OKX(
-        symbols=['BTC-USD'],
-        channels=[TRADES],
-        callbacks={TRADES: custom_arctic_callback}
-    ))
-
-
-    print("\nStarting data ingestion with custom callback. Press Ctrl+C to stop.")
+    print("\nStarting data ingestion. Press Ctrl+C to stop.")
     f.run()
 
 
 if __name__ == '__main__':
     try:
-        main()
+        main(["BTC-USD"])
     except KeyboardInterrupt:
         print("\nData ingestion stopped by user.")
