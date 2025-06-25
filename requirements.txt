@@ -1,0 +1,7 @@
+asyncio
+ccxt
+arcticdb
+pandas
+numpy
+matplotlib
+pathlib
