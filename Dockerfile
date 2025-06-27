@@ -58,7 +58,7 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 COPY --from=builder /opt/venv /opt/venv
 
 # Copy the application code
-COPY . .
+COPY server/. .
 
 # Set the PATH environment variable to include the venv's bin directory
 ENV PATH="/opt/venv/bin:$PATH"

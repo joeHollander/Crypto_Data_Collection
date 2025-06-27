@@ -115,10 +115,13 @@ async def data_collector_task(exchange, exchange_id, symbol, interval):
                 await asyncio.sleep(5)
             except ccxt.ExchangeError as e:
                 print(f"{log_prefix} An exchange error occurred: {e}. Stopping task.")
-                break 
+                await asyncio.sleep(5)
             except Exception as e:
                 print(f"{log_prefix} An unexpected error occurred: {e}. Stopping task.")
-                break
+                await asyncio.sleep(5)
+            except:
+                await asyncio.sleep(5)
+                print(f"{log_prefix} No clue")
             
             await asyncio.sleep(interval)
     except asyncio.CancelledError:
