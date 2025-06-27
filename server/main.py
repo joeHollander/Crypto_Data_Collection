@@ -102,7 +102,7 @@ async def data_collector_task(exchange, exchange_id, symbol, interval):
                         'ask_vwap_cost': [float(round(ask_vwap_cost, 2))],
                     }
                     df = pd.DataFrame(data_dict)
-                    db_symbol = f"{exchange_id}_{symbol.replace('/', '_')}"
+                    db_symbol = f"{exchange_id}_{symbol.replace('/', '_')}_{interval}s"
                     lib.append(db_symbol, df)
                     
                     print(f"{log_prefix} Time: {timestamp} | Bid: {bids[0][0]} | Ask: {asks[0][0]}") 

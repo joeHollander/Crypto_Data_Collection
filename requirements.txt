@@ -5,3 +5,11 @@ pandas
 numpy
 matplotlib
 pathlib
+datetime
+fastapi
+secrets
+pydantic
+pandas 
+io
+os
+zipfile

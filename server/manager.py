@@ -7,8 +7,9 @@ class TaskManager:
         self.task: Optional[asyncio.Task] = None
         self.current_input: list[tuple[str, str, int]] = None
 
-    async def start(self, initial_input: str):
+    async def start(self, initial_input: list[tuple[str, str, int]]):
         """Starts the background task if it's not already running."""
+        self.initial_input = initial_input
         if self.task and not self.task.done():
             print("Task is already running. Cannot start again.")
             return
@@ -34,8 +35,10 @@ class TaskManager:
         self.task = None
         print("Manager has confirmed the task is stopped.")
 
-    async def restart(self, new_input: str):
+    async def restart(self, new_input: list[tuple[str, str, int]] | None):
         """Restarts the background task with a new input parameter."""
+        if new_input is None:
+            new_input = self.initial_input
         print(f"--- Received restart command with new input: '{new_input}' ---")
         await self.stop()
         await self.start(new_input)
