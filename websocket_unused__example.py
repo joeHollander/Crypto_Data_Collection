@@ -2,6 +2,7 @@
 # first using OKX or Kraken with BTCUSDT or BTCUSD
 # then more
 # then connect to VPS
+# USED AS REFERENCE
 
 import asyncio
 import pandas as pd
