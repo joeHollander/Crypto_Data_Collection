@@ -1,10 +1,9 @@
 import requests
 import os
 
-url = "http://127.0.0.1:8000/command"
+url = "http://127.0.0.1:8000/command/restart"
 #SERVER_KEY = os.environ.get("SERVER_KEY")
-SERVER_KEY = "crypto2025"
-print(SERVER_KEY)
+SERVER_KEY = "my-control-secret-12345"
 
 headers = {
     "Content-Type": "application/json",
@@ -12,8 +11,7 @@ headers = {
 }
 
 payload = {
-    "command": "toggle_feature",
-    "enable_feature": False
+    "new_input": [("cryptocom", "BTC/USD", 2)]
 }
 
 try:

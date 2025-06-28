@@ -1,6 +1,7 @@
 import asyncio
 from typing import Optional
 from main import main 
+import pdb
 
 class TaskManager:
     def __init__(self):
@@ -9,13 +10,13 @@ class TaskManager:
 
     async def start(self, initial_input: list[tuple[str, str, int]]):
         """Starts the background task if it's not already running."""
-        self.initial_input = initial_input
         if self.task and not self.task.done():
             print("Task is already running. Cannot start again.")
             return
 
         self.current_input = initial_input
         # Create the task and store a reference to it
+        print(f"Creating task with {self.current_input}")
         self.task = asyncio.create_task(main(self.current_input))
 
     async def stop(self):
@@ -38,7 +39,7 @@ class TaskManager:
     async def restart(self, new_input: list[tuple[str, str, int]] | None):
         """Restarts the background task with a new input parameter."""
         if new_input is None:
-            new_input = self.initial_input
+            new_input = self.current_input
         print(f"--- Received restart command with new input: '{new_input}' ---")
         await self.stop()
         await self.start(new_input)

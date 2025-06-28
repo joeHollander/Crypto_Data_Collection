@@ -11,7 +11,6 @@ lmdb_uri = "lmdb://crypto_data"
 ac = Arctic(lmdb_uri)
 
 # creates library if it doesn't exist
-# Using a separate library for this test run.
 lib = ac.get_library("rest_data_test_concurrent", create_if_missing=True)
 
 def vwap(orders, cost=100_000):
@@ -72,7 +71,7 @@ async def data_collector_task(exchange, exchange_id, symbol, interval):
     The core data collection loop. It receives an already initialized exchange instance
     and is responsible only for fetching and storing data.
     """
-    log_prefix = f"[{exchange_id.upper()} - {symbol}]"
+    log_prefix = f"[{exchange_id.upper()} - {symbol} - {interval}s]"
     print(f"{log_prefix} Starting {interval}s data collection.")
 
     try:
@@ -120,8 +119,9 @@ async def data_collector_task(exchange, exchange_id, symbol, interval):
                 print(f"{log_prefix} An unexpected error occurred: {e}. Stopping task.")
                 await asyncio.sleep(5)
             except:
-                await asyncio.sleep(5)
                 print(f"{log_prefix} No clue")
+                break
+                
             
             await asyncio.sleep(interval)
     except asyncio.CancelledError:

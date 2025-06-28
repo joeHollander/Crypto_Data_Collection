@@ -13,3 +13,4 @@ pandas
 io
 os
 zipfile
+uvicorn
